@@ -1,32 +1,38 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-
+#include <vector>
+#include <algorithm>
 
 int main() {
     std::ifstream infile("input.txt");
-    size_t maxCalorieElf = 1;
     std::string line;
-    size_t maxCalories = 0;
     size_t currentCaloriesSum = 0;
-    size_t currentElf = 1;
+    std::vector<double> elfCalories;
+    std::make_heap(elfCalories.begin(), elfCalories.end());
 
     for (std::string line; std::getline(infile, line);) {
         if (line.size() == 0) {
-            if (currentCaloriesSum > maxCalories) {
-                maxCalorieElf = currentElf;
-                maxCalories = currentCaloriesSum;
-            }
+            elfCalories.push_back(currentCaloriesSum);
+            std::push_heap(elfCalories.begin(), elfCalories.end());
             currentCaloriesSum = 0;
-            currentElf += 1;
         }
         else {
             currentCaloriesSum += std::stoi(line);
         }
     };
 
+    
 
-    std::cout << "Max calorie elf: " << maxCalorieElf << std::endl;
-    std::cout << "Max calories is: " << maxCalories << std::endl;
+    size_t topKCaloriesSum = 0;
+
+    for (auto i = 0; i < 3; ++i) {
+        topKCaloriesSum += elfCalories.front();
+        std::pop_heap(elfCalories.begin(), elfCalories.end());
+        elfCalories.pop_back();
+    };
+
+    std::cout << topKCaloriesSum << std::endl;
+
     return 0;
 }
