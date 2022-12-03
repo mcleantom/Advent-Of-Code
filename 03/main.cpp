@@ -10,21 +10,27 @@ int main() {
     std::string line;
     std::vector<char> uniques;
 
-    for (std::string line; std::getline(infile, line);) {
-        std::set<char> uniquesLeft, uniquesRight;
-        std::vector<char> both;
-        for (auto c : line.substr(0, line.size()/2)) {
-            uniquesLeft.insert(c);
-        };
-        for (auto c : line.substr(line.size()/2)) {
-            uniquesRight.insert(c);
+    while (infile.peek() != EOF) {
+        std::vector<std::set<char>> badges(3);
+        for (auto i=0; i<3; ++i) {
+            std::getline(infile, line);
+            for (auto c : line) {
+                badges[i].insert(c);
+            }
         }
+        std::set<char> abIntersection;
         std::set_intersection(
-            uniquesLeft.begin(), uniquesLeft.end(),
-            uniquesRight.begin(), uniquesRight.end(),
+            badges[0].begin(), badges[0].end(),
+            badges[1].begin(), badges[1].end(),
+            std::inserter(abIntersection, abIntersection.begin())
+        );
+        std::set_intersection(
+            abIntersection.begin(), abIntersection.end(),
+            badges[2].begin(), badges[2].end(),
             std::back_inserter(uniques)
         );
     }
+
     size_t sum = 0;
     for (auto c : uniques) {
         if (int(c) < int('a')) {
